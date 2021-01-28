@@ -852,8 +852,15 @@
 (defn buscar-lineas-restantes
   ([amb] (buscar-lineas-restantes (amb 1) (amb 0)))
   ([act prg]
-    )
-)
+    (cond (empty? prg) nil
+          (= (act 0) (first (first prg)))
+            (cond (<= (act 1) 0) (conj (rest prg) (list(first(first prg))))
+                  (>= (act 1) (count(expandir-nexts(rest(first prg)))))
+                    (conj (rest prg)
+                          (concat(list(first(first prg))) (expandir-nexts(rest(first prg)))))
+                  :else (conj (rest prg)
+                              (concat(list(first(first prg))) (rest(expandir-nexts(rest(first prg)))))))
+          :else (buscar-lineas-restantes act (rest prg)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; continuar-linea: implementa la sentencia RETURN, retornando una

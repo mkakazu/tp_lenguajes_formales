@@ -1031,8 +1031,14 @@
 ; user=> (eliminar-cero-entero -0.5)
 ; "-.5"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn eliminar-cero-entero-aux [s]
+  (cond (= (first s) "-") (concat (list "-") (eliminar-cero-entero-aux (rest s)))
+        (empty? s) s
+        (and (= (first s) "0") (< 1 (count s))) (eliminar-cero-entero-aux (rest s))
+  :else s))
+
 (defn eliminar-cero-entero [n]
-)
+  (apply str (eliminar-cero-entero-aux (map str (str n)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Despues de cargarse el archivo, debe mostrarse el valor true 

@@ -728,7 +728,11 @@
 ; ((PRINT 1) (NEXT A) (NEXT B))
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn expandir-nexts [n]
-)
+  (cond (empty? n) '()
+        (=(first(first n)) 'NEXT)
+        (map (fn [x] (concat '(NEXT) (list x)))
+             (filter (fn [x] (not= x (symbol ","))) (rest(first n))))
+        :else (concat (list(first n)) (expandir-nexts (rest n)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; dar-error: recibe un error (codigo o mensaje) y el puntero de 

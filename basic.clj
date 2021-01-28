@@ -661,7 +661,10 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn palabra-reservada? [x]
-)
+  (case x
+    (PRINT LOAD SAVE REM NEW RUN GOTO IF INPUT ON GOSUB RETURN FOR NEXT
+    "PRINT" "LOAD" "SAVE" "REM" "NEW" "RUN" "GOTO" "IF" "INPUT" "ON" "GOSUB" "RETURN" "FOR" "NEXT") true
+    false))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; operador?: predicado para determinar si un identificador es un

@@ -924,8 +924,14 @@
 ; user=> (preprocesar-expresion '(X + . / Y% * Z) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 5 Y% 2}])
 ; (5 + 0 / 2 * 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn preprocesar-expresion-aux [item values]
+  (cond (= item \.) 0
+        (empty? values) "fatal"
+        (= item (first values)) (first (first values))
+        :else (preprocesar-expresion-aux item (rest(rest values)))))
+
 (defn preprocesar-expresion [expr amb]
-)
+  (map preprocesar-expresion-aux expr (last amb)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; desambiguar: recibe un expresion y la retorna sin los + unarios,

@@ -1001,8 +1001,12 @@
 ; user=> (eliminar-cero-decimal 'A)
 ; A
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn eliminar-cero-decimal-aux [s]
+  (case (first s)
+        ("0" ".") (eliminar-cero-decimal-aux (rest s)) s))
+
 (defn eliminar-cero-decimal [n]
-)
+  (apply str (reverse (eliminar-cero-decimal-aux (reverse (map str (str n)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; eliminar-cero-entero: recibe un simbolo y lo retorna convertido

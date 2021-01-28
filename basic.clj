@@ -705,8 +705,16 @@
 ; user=> (cargar-linea '(15 (X = X - 1)) ['((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
 ; [((10 (PRINT X)) (15 (X = X - 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn insert-in-env [lin amb]
+  (cond (empty? amb) (list lin)
+        (< (first(first amb)) (first lin)) (concat(list(first amb)) (insert-in-env lin (rest amb)))
+        (> (first(first amb)) (first lin)) (concat(list lin) amb)
+        (= (first(first amb)) (first lin)) (concat(list lin) (rest amb))
+  :else '("error")))
+
 (defn cargar-linea [linea amb]
-)
+  (vector (insert-in-env linea (get amb 0))
+          (vec (rest amb))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; expandir-nexts: recibe una lista de sentencias y la devuelve con

@@ -809,8 +809,13 @@
 ; user=> (contar-sentencias 20 [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
 ; 2
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn contar-sentencias-aux [nro-linea amb]
+  (cond (empty? amb) '0
+        (=(first(first amb)) nro-linea) (count(expandir-nexts(rest(first amb))))
+        :else (contar-sentencias-aux nro-linea (rest amb))))
+
 (defn contar-sentencias [nro-linea amb]
-)
+  (contar-sentencias-aux nro-linea (get amb 0)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; buscar-lineas-restantes: recibe un ambiente y retorna la

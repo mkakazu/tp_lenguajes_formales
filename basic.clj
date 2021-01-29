@@ -598,6 +598,13 @@
         NEXT (if (<= (count (next sentencia)) 1)
                  (retornar-al-for amb (fnext sentencia))
                   (do (dar-error 16 (amb 1)) [nil amb]))  ; Syntax error
+        DATA (dar-error 666)
+        READ (dar-error 666)
+        RESTORE (dar-error 666)
+        CLEAR (dar-error 666)
+        LET (dar-error 666)
+        LIST (print amb)
+        END (dar-error 666)
         (if (= (second sentencia) '=)
             (let [resu (ejecutar-asignacion sentencia amb)]
                  (if (nil? resu)

@@ -707,10 +707,12 @@
 ; (IF X nil * Y < 12 THEN LET nil X = 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn symbolo? [x]
-  (if (or (palabra-reservada? x) (operador? x)) x nil))
+  (case x
+    ('! '&) nil
+    :else x))
 
 (defn anular-invalidos [sentencia]
-  (map (fn [x] (symbolo? x) sentencia)))
+  (map (fn [x] (symbolo? x)) sentencia))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; cargar-linea: recibe una linea de codigo y un ambiente y retorna

@@ -984,10 +984,7 @@
 ; [((10 (PRINT X))) [10 1] [] [] [] 0 {X$ "HOLA MUNDO"}]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn ejecutar-asignacion [sentencia amb]
-  (cond (empty? (last amb)) amb
-        :else
-          (map (fn [x] (if(= x ((first (last amb)) 0)) ((first (last amb)) 1) x))
-               (rest(rest sentencia)))))
+  (conj (pop amb) (assoc (last amb) (first sentencia) (calcular-expresion (nthrest sentencia 2) amb))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; preprocesar-expresion: recibe una expresion y la retorna con

@@ -818,8 +818,8 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn variable-float? [x]
-  (case (second (map str (str x))) ("%") true
-        false))
+(if (or (palabra-reservada? x) (operador? x) (string? x)) false
+  (if(nil?(re-matches #"^[a-zA-Z][a-zA-Z\d]*" (str x))) false true)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; variable-integer?: predicado para determinar si un identificador

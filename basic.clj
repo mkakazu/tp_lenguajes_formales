@@ -625,6 +625,10 @@
         (case operador
           -u (- operando)
           LEN (count operando)
+          ATN (Math/atan operando)
+          SIN (Math/sin operando)
+          INT (int operando)
+          ASC (int (first operando))
           STR$ (if (not (number? operando)) (dar-error 163 nro-linea) (eliminar-cero-entero operando)) ; Type mismatch error
           CHR$ (if (or (< operando 0) (> operando 255)) (dar-error 53 nro-linea) (str (char operando)))))) ; Illegal quantity error
   ([operador operando1 operando2 nro-linea]

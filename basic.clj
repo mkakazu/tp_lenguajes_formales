@@ -925,13 +925,6 @@
 ; user=> (continuar-linea [(list '(10 (PRINT X)) '(15 (GOSUB 100) (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [[15 2]] [] [] 0 {}])
 ; [:omitir-restante [((10 (PRINT X)) (15 (GOSUB 100) (X = X + 1)) (20 (NEXT I , J))) [15 1] [] [] [] 0 {}]]
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn buscar-gosub [amb]
-  (cond (empty? amb) 'fatal
-        :else (map (fn [x] (if (= (first (expandir-nexts x)) 'GOSUB)
-                               (first(first amb))
-                               0))
-                   (rest(first amb)))))
-
 (defn continuar-linea [amb]
   (if (empty? (amb 2))
     (do (dar-error 22 (amb 1)) [nil amb])

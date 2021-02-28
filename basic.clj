@@ -933,8 +933,13 @@
                    (rest(first amb)))))
 
 (defn continuar-linea [amb]
-  (let [res (+ (buscar-gosub (first amb)))]
-    (if (= res 0) 'error res)))
+  (if (empty? (amb 2))
+    (do (dar-error 22 (amb 1)) [nil amb])
+    (let [punt (update (first (amb 2)) 1 dec)]
+       [:omitir-restante (assoc (update amb 2 (comp vec next)) 1 punt)]
+      )
+    )
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; extraer-data: recibe la representación intermedia de un programa

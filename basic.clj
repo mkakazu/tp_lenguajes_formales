@@ -774,8 +774,15 @@
 (defn expandir-nexts [n]
   (cond (empty? n) '()
         (=(first(first n)) 'NEXT)
+        (let [s (rest(first n))]
+          (concat
+            (cond
+              (empty? s) '((NEXT))
+              (> (count s) 1)
         (map (fn [x] (concat '(NEXT) (list x)))
              (filter (fn [x] (not= x (symbol ","))) (rest(first n))))
+            :else (list (first n)))
+            (expandir-nexts (rest n))))
         :else (concat (list(first n)) (expandir-nexts (rest n)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

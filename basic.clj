@@ -1039,13 +1039,38 @@
 ; 9
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn precedencia [token]
-  (let [p {'OR 1 'AND 2 'NOT 3
-           '= 4 '<> 4 '>< 4 '< 4 '> 4 '>= 4 '<= 4 '=> 4 '=< 4
-           '+ 5 '* 6 '- 7 (symbol "^") 8 (symbol "(") 9 (symbol ")") 9 }]
-    (if (nil? (p token))
-      nil
-      (p token)
-      )))
+  (cond
+    (= token (symbol ",")) 0
+    (= token 'OR) 1
+    (= token 'AND) 2
+    (= token 'NOT) 3
+    (= token '=) 4
+    (= token '<>) 4
+    (= token '><) 4
+    (= token '<)  4
+    (= token '>)  4
+    (= token '>=) 4
+    (= token '<=) 4
+    (= token '=>) 4
+    (= token '=<) 4
+    (= token '+) 5
+    (= token '-) 5
+    (= token '*) 6
+    (= token '/) 6
+    (= token '-u) 7
+    (= token (symbol "^")) 8
+    (= token 'MID$) 9
+    (= token 'MID3$) 9
+    (= token 'SIN) 9
+    (= token 'ATN) 9
+    (= token 'INT) 9
+    (= token 'LEN) 9
+    (= token 'CHR$) 9
+    (= token 'ASC) 9
+    (= token 'STR$) 9
+    (= token (symbol "(")) nil
+    (= token (symbol ")")) nil
+    :else 11))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; aridad: recibe un token y retorna el valor de su aridad, por

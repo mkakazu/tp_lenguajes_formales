@@ -598,13 +598,13 @@
         NEXT (if (<= (count (next sentencia)) 1)
                  (retornar-al-for amb (fnext sentencia))
                   (do (dar-error 16 (amb 1)) [nil amb]))  ; Syntax error
-        DATA (dar-error 666)
-        READ (dar-error 666)
-        RESTORE (dar-error 666)
-        CLEAR (dar-error 666)
-        LET (dar-error 666)
-        LIST (print amb)
-        END (dar-error 666)
+        DATA [nil (assoc amb 4 (vec(concat (amb 4) (next sentencia))))]
+        READ (do (leer-data (next sentencia) amb))
+        RESTORE [:sin-errores (assoc amb 5 0)]
+        CLEAR [nil (assoc amb 6 {})]
+        LET (do [:sin-errores (ejecutar-asignacion (rest sentencia) amb)])
+        LIST (do (doseq [i (amb 0)] (println i)) [nil amb])
+        END [nil (assoc amb 1 [])]
         (if (= (second sentencia) '=)
             (let [resu (ejecutar-asignacion sentencia amb)]
                  (if (nil? resu)

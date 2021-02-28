@@ -950,8 +950,25 @@
 ; user=> (extraer-data (list '(10 (PRINT X) (REM ESTE NO) (DATA 30)) '(20 (DATA HOLA)) (list 100 (list 'DATA 'MUNDO (symbol ",") 10 (symbol ",") 20))))
 ; ("HOLA" "MUNDO" 10 20)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defn extraer-data-aux1 [s]
+  (case (first s)
+    DATA (rest s)
+    REM 'REM
+    nil))
+
+(defn extraer-data-aux [s]
+  (->>
+   (map extraer-data-aux1 (rest s))
+   (flatten ,,,)
+   (remove nil? ,,,)
+   (remove (fn [x] (= x (symbol ","))) ,,,)))
+
 (defn extraer-data [prg]
-)
+  (->>
+   (map extraer-data-aux prg)
+   (remove (fn [x] (= (first x) 'REM)))
+   (flatten ,,,)
+   (map (fn [x] (if(number? x) x (str x))) ,,,)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; ejecutar-asignacion: recibe una asignacion y un ambiente, y

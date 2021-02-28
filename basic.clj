@@ -1133,7 +1133,9 @@
         ("0" ".") (eliminar-cero-decimal-aux (rest s)) s))
 
 (defn eliminar-cero-decimal [n]
-  (apply str (reverse (eliminar-cero-decimal-aux (reverse (map str (str n)))))))
+  (if (number? n)
+    (if (= 0.0 (rem (float n) 1)) (int n) (float n))
+    n))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; eliminar-cero-entero: recibe un simbolo y lo retorna convertido

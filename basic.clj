@@ -729,13 +729,13 @@
 ; user=> (anular-invalidos '(IF X & * Y < 12 THEN LET ! X = 0))
 ; (IF X nil * Y < 12 THEN LET nil X = 0)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defn symbolo? [x]
+(defn anular-invalidos-aux [x]
   (case x
-    ('! '&) nil
-    :else x))
+    (! &) nil
+    x))
 
 (defn anular-invalidos [sentencia]
-  (map (fn [x] (symbolo? x)) sentencia))
+  (map anular-invalidos-aux sentencia))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; cargar-linea: recibe una linea de codigo y un ambiente y retorna

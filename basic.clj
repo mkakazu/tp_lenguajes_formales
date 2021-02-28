@@ -1087,8 +1087,34 @@
 ; 3
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn aridad [token]
+(cond
+(= token 'MID3$) 3
+(= token '+) 2
+(= token '-) 2
+(= token '*) 2
+(= token '/) 2
+(= token '<) 2
+(= token '>) 2
+(= token '<>) 2
+(= token '><) 2
+(= token 'OR) 2
+(= token 'AND) 2
+(= token '=) 2
 (or (= token '=<) (= token '<=)) 2
 (or (= token '=>) (= token '>=)) 2
+(= token 'MID$) 2
+(= token (symbol "^") ) 2
+(= token 'SIN) 1
+(= token 'LEN) 1
+(= token 'ATN) 1
+(= token 'INT) 1
+(= token 'CHR$) 1
+(= token 'ASC) 1
+(= token '-u) 1
+(= token 'NOT) 1
+(= token 'STR$) 1
+:else 0
+))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; eliminar-cero-decimal: recibe un numero y lo retorna sin ceros

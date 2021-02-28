@@ -703,9 +703,25 @@
 ; false
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn operador? [x]
-  (case x
-    (- ? * / + < > = >= => <> >< (symbol ":") (symbol "^")) true
-    false))
+(cond
+(or
+(= x '-)
+(= x '?)
+(= x '*)
+(= x '/)
+(= x '+)
+(= x '<)
+(= x '>)
+(= x '=)
+(= x '<=)
+(= x '>=)
+(= x '<>)
+(= x '><)
+(= x (symbol ":"))
+(= x (symbol "^"))
+) true
+:else false)
+  )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; anular-invalidos: recibe una lista de simbolos y la retorna con

@@ -687,8 +687,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defn palabra-reservada? [x]
   (case x
-    (PRINT LOAD SAVE REM NEW RUN GOTO IF INPUT ON GOSUB RETURN FOR NEXT
-    "PRINT" "LOAD" "SAVE" "REM" "NEW" "RUN" "GOTO" "IF" "INPUT" "ON" "GOSUB" "RETURN" "FOR" "NEXT") true
+    (PRINT LOAD SAVE REM NEW RUN GOTO IF INPUT ON GOSUB RETURN FOR NEXT INT ATN OR AND LEN MID$ STEP SIN CHR$ ASC MID3$ STR$
+    ;"PRINT" "LOAD" "SAVE" "REM" "NEW" "RUN" "GOTO" "IF" "INPUT" "ON" "GOSUB" "RETURN" "FOR" "NEXT"
+    ) true
     false))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

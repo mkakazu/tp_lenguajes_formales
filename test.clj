@@ -1,183 +1,171 @@
-(defn test-palabra-reservada? [x]
-(= (map palabra-reservada? '(REM SPACE)) '(true false))
-)
+(require '[clojure.test :refer [is deftest run-tests]])
 
-(defn test-operador? [x]
-(= (map operador? '('+ (symbol "+") (symbol "%"))) '(true true false))
-)
+(load-file "basic.clj")
 
-(defn test-anular-invalidos [sentencia]
-(= (anular-invalidos '(IF X & * Y < 12 THEN LET ! X = 0)) '(IF X nil * Y < 12 THEN LET nil X = 0))
-)
+(deftest test-palabra-reservada?
+   (is (= true (palabra-reservada? 'REM)))
+   (is (= false (palabra-reservada? 'SPACE))))
 
-(defn test-cargar-linea [linea amb]
-; (cargar-linea '(10 (PRINT X)) [() [:ejecucion-inmediata 0] [] [] [] 0 {}])
-; (cargar-linea '(20 (X = 100)) ['((10 (PRINT X))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
-; (cargar-linea '(15 (X = X + 1)) ['((10 (PRINT X)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
-; (cargar-linea '(15 (X = X - 1)) ['((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
+(deftest test-operador?
+  (is (= true (operador? '+)))
+  (is (= true (operador? (symbol "+"))))
+  (is (= false (operador? (symbol "%")))))
 
-;[((10 (PRINT X))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
-;[((10 (PRINT X)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
-;[((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
-;[((10 (PRINT X)) (15 (X = X - 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]
-)
+(deftest test-anular-invalidos
+  (is (= (anular-invalidos '(IF X & * Y < 12 THEN LET ! X = 0))
+         '(IF X nil * Y < 12 THEN LET nil X = 0))))
 
-; (def n (list '(PRINT 1) (list 'NEXT 'A (symbol ",") 'B)))
-; #'user/n
-; n
-; ((PRINT 1) (NEXT A , B))
-; (expandir-nexts n)
-; ((PRINT 1) (NEXT A) (NEXT B))
-(defn test-expandir-nexts [n]
-)
+(deftest test-cargar-linea
+  (def n0 '[((10 (PRINT X))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
+  (def n1 '[((10 (PRINT X)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
+  (def n2 '[((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
+  (def n3 '[((10 (PRINT X)) (15 (X = X - 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}])
 
-; dar-error: recibe un error (codigo o mensaje) y el puntero de
-; programa, muestra el error correspondiente y retorna nil, por
-; ejemplo:
-; (dar-error 16 [:ejecucion-inmediata 4])
-;
-; ?SYNTAX ERRORnil
-; (dar-error "?ERROR DISK FULL" [:ejecucion-inmediata 4])
-;
-; ?ERROR DISK FULLnil
-; (dar-error 16 [100 3])
-;
-; ?SYNTAX ERROR IN 100nil
-; (dar-error "?ERROR DISK FULL" [100 3])
-;
-; ?ERROR DISK FULL IN 100nil
-(defn test-dar-error [cod prog-ptrs]
-)
-
-(defn test-variable-float? [x]
-(= (map variable-float? '(X X% X$)) '(true false false))
-)
-
-(defn test-variable-integer? [x]
-(= (map variable-integer? '(X% X X$)) '(true false false))
-)
-
-(defn test-variable-string? [x]
- (=(map variable-string? '(X$ X X%) '(true false false))
-)
-
-; (contar-sentencias 10 [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
-; 2
-; (contar-sentencias 15 [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
-; 1
-; (contar-sentencias 20 [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
-; 2
-(defn test-contar-sentencias [nro-linea amb]
-)
-
-; buscar-lineas-restantes: recibe un ambiente y retorna la
-; representacion intermedia del programa a partir del puntero de
-; programa (que indica la linea y cuantas sentencias de la misma
-; aun quedan por ejecutar), por ejemplo:
-; (buscar-lineas-restantes [() [:ejecucion-inmediata 0] [] [] [] 0 {}])
-; nil
-; (buscar-lineas-restantes ['((PRINT X) (PRINT Y)) [:ejecucion-inmediata 2] [] [] [] 0 {}])
-; nil
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 2] [] [] [] 0 {}])
-; ((10 (PRINT X) (PRINT Y)) (15 (X = X + 1)) (20 (NEXT I , J)))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
-; ((10 (PRINT Y)) (15 (X = X + 1)) (20 (NEXT I , J)))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 0] [] [] [] 0 {}])
-; ((10) (15 (X = X + 1)) (20 (NEXT I , J)))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [15 1] [] [] [] 0 {}])
-; ((15 (X = X + 1)) (20 (NEXT I , J)))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [15 0] [] [] [] 0 {}])
-; ((15) (20 (NEXT I , J)))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [] [] [] 0 {}])
-; ((20 (NEXT I) (NEXT J)))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 2] [] [] [] 0 {}])
-; ((20 (NEXT I) (NEXT J)))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 1] [] [] [] 0 {}])
-; ((20 (NEXT J)))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 0] [] [] [] 0 {}])
-; ((20))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 -1] [] [] [] 0 {}])
-; ((20))
-; (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [25 0] [] [] [] 0 {}])
-; nil
-(defn test-buscar-lineas-restantes
-)
-
-; continuar-linea: implementa la sentencia RETURN, retornando una
-; (continuar-linea [(list '(10 (PRINT X)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [] [] [] 0 {}])
-
-; ?RETURN WITHOUT GOSUB ERROR IN 20[nil [((10 (PRINT X)) (15 (X = X + 1)) (20 (NEXT I , J))) [20 3] [] [] [] 0 {}]]
-; (continuar-linea [(list '(10 (PRINT X)) '(15 (GOSUB 100) (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [[15 2]] [] [] 0 {}])
-; [:omitir-restante [((10 (PRINT X)) (15 (GOSUB 100) (X = X + 1)) (20 (NEXT I , J))) [15 1] [] [] [] 0 {}]]
-(defn test-continuar-linea [amb]
-)
-
-(defn test-extraer-data [prg]
-(= (extraer-data '((()) (list '(10 (PRINT X) (REM ESTE NO) (DATA 30)) '(20 (DATA HOLA)) (list 100 (list 'DATA 'MUNDO (symbol ",") 10 (symbol ",") 20))))) '(() ("HOLA" "MUNDO" 10 20)))
-)
-
-; ejecutar-asignacion: recibe una asignacion y un ambiente, y
-; (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
-; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 5}]
-; (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
-; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 5}]
-; (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
-; [((10 (PRINT X))) [10 1] [] [] [] 0 {X 3}]
-; (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
-; [((10 (PRINT X))) [10 1] [] [] [] 0 {X$ "HOLA MUNDO"}]
-(defn test-ejecutar-asignacion [sentencia amb]
-)
-
-; preprocesar-expresion: recibe una expresion y la retorna con
-; las variables reemplazadas por sus valores y el punto por el
-; cero, por ejemplo:
-; (preprocesar-expresion '(X$ + " MUNDO" + Z$) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
-; ("HOLA" + " MUNDO" + "")
-; (preprocesar-expresion '(X + . / Y% * Z) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 5 Y% 2}])
-; (5 + 0 / 2 * 0)
-(defn test-preprocesar-expresion [expr amb]
-)
-
-; desambiguar: recibe un expresion y la retorna sin los + unarios,
-; con los - unarios reemplazados por -u y los MID$ ternarios
-; reemplazados por MID3$, por ejemplo:
-(defn test-desambiguar [expr]
- (= (map desambiguar '((list '- 2 '* (symbol "(") '- 3 '+ 5 '- (symbol "(") '+ 2 '/ 7 (symbol ")") (symbol ")"))
-  (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ")"))
-  (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ",") 3 (symbol ")"))
-  (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")"))))
-'(
- (-u 2 * ( -u 3 + 5 - ( 2 / 7 ) ))
- (MID$ ( 1 , 2 ))
- (MID3$ ( 1 , 2 , 3 ))
- (MID3$ ( 1 , -u 2 + K , 3 ))))
-)
-
-(defn test-precedencia [token]
- (= (map precedencia '(OR AND * -u MID$)) '(1 2 6 7 9))
-)
-
-; aridad: recibe un token y retorna el valor de su aridad, por
-; ejemplo:
-; (aridad 'THEN)
-; 0
-; (aridad 'SIN)
-; 1
-; (aridad '*)
-; 2
-; (aridad 'MID$)
-; 2
-; (aridad 'MID3$)
-; 3
-(defn test-aridad [token]
-)
+  (is (= n0 (cargar-linea '(10 (PRINT X)) [() [:ejecucion-inmediata 0] [] [] [] 0 {}])))
+  (is (= n1 (cargar-linea '(20 (X = 100)) ['((10 (PRINT X))) [:ejecucion-inmediata 0] [] [] [] 0 {}]) ))
+  (is (= n2 (cargar-linea '(15 (X = X + 1)) ['((10 (PRINT X)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]) ))
+  (is (= n3 (cargar-linea '(15 (X = X - 1)) ['((10 (PRINT X)) (15 (X = X + 1)) (20 (X = 100))) [:ejecucion-inmediata 0] [] [] [] 0 {}]) )))
 
 
-(defn test-eliminar-cero-decimal [n]
- (= (map eliminar-cero-decimal '(1.5 1.50 1.0 A)) '(1.5 1.5 1 A))
-)
+(deftest test-expandir-nexts
+  (def n0 (list '(PRINT 1) (list 'NEXT 'A (symbol ",") 'B)))
+  (def n1 (list '(PRINT 1) (list 'NEXT 'A) (list 'NEXT 'B)))
+  (def n2 (list '(PRINT 1) (list 'NEXT 'A)))
+  (def n3 (list '(PRINT 1) (list 'NEXT)))
+  (is (= (expandir-nexts n0) '((PRINT 1) (NEXT A) (NEXT B))))
+  (is (= (expandir-nexts n1) '((PRINT 1) (NEXT A) (NEXT B))))
+  (is (= (expandir-nexts n2) '((PRINT 1) (NEXT A))))
+  (is (= (expandir-nexts n3) '((PRINT 1) (NEXT)))))
 
+(deftest test-dar-error
+ (is (= (dar-error 16 [:ejecucion-inmediata 4]) nil))
+ (is (= (dar-error "?ERROR DISK FULL" [:ejecucion-inmediata 4]) nil))
+ (is (= (dar-error 16 [100 3]) nil ))
+ (is (= (dar-error "?ERROR DISK FULL" [100 3]) nil)))
 
-(defn test-eliminar-cero-entero [n]
-(= (map eliminar-cero-entero '(nil A 0 1.5 1 -1 -1.5 0.5 -0.5)) '(nil "A" "0" "1.5" "1" "-1" "-1.5" ".5" "-.5"))
-)
+(deftest test-variable-float?
+  (is (= true (variable-float? 'X)))
+  (is (= false (variable-float? 'X%)))
+  (is (= false (variable-float? 'X$))))
+
+(deftest test-variable-integer?
+  (is (= true (variable-integer? 'X%)))
+  (is (= false (variable-integer? 'X)))
+  (is (= false (variable-integer? 'X$))))
+
+(deftest test-variable-string?
+  (is (= true (variable-string? 'X$)))
+  (is (= false (variable-string? 'X)))
+  (is (= false (variable-string? 'X%))))
+
+(deftest test-contar-sentencias
+  (def amb
+    [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
+  (is (= 2 (contar-sentencias 10 amb)))
+  (is (= 1 (contar-sentencias 15 amb)))
+  (is (= 2 (contar-sentencias 20 amb))))
+
+(deftest test-buscar-lineas-restantes
+  (is (= (buscar-lineas-restantes [() [:ejecucion-inmediata 0] [] [] [] 0 {}]) nil))
+  (is (= (buscar-lineas-restantes ['((PRINT X) (PRINT Y)) [:ejecucion-inmediata 2] [] [] [] 0 {}]) nil))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 2] [] [] [] 0 {}])
+         (list (list 10 (list 'PRINT 'X) (list 'PRINT 'Y)) (list 15 (list 'X '= 'X '+ 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J)))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 1] [] [] [] 0 {}])
+         (list (list 10 (list 'PRINT 'Y)) (list 15 (list 'X '= 'X '+ 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J)))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [10 0] [] [] [] 0 {}])
+         (list (list 10) (list 15 (list 'X '= 'X '+ 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J)))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [15 1] [] [] [] 0 {}])
+         (list (list 15 (list 'X '= 'X '+ 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J)))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [15 0] [] [] [] 0 {}])
+         (list (list 15) (list 20 (list 'NEXT 'I (symbol ",") 'J)))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [] [] [] 0 {}])
+         '((20 (NEXT I) (NEXT J)))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 2] [] [] [] 0 {}])
+         '((20 (NEXT I) (NEXT J)))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 1] [] [] [] 0 {}])
+         '((20 (NEXT J)))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 0] [] [] [] 0 {}])
+         '((20))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 -1] [] [] [] 0 {}])
+         '((20))))
+  (is (= (buscar-lineas-restantes [(list '(10 (PRINT X) (PRINT Y)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [25 0] [] [] [] 0 {}])
+         nil)))
+
+(deftest test-continuar-linea
+  (is (= (continuar-linea [(list '(10 (PRINT X)) '(15 (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [] [] [] 0 {}])
+         [nil [(list (list 10 (list 'PRINT 'X)) (list 15 (list 'X '= 'X '+ 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [] [] [] 0 {}]]))
+  (is (= (continuar-linea [(list '(10 (PRINT X)) '(15 (GOSUB 100) (X = X + 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [20 3] [[15 2]] [] [] 0 {}])
+        [:omitir-restante [(list (list 10 (list 'PRINT 'X)) (list 15 (list 'GOSUB 100) (list 'X '= 'X '+ 1)) (list 20 (list 'NEXT 'I (symbol ",") 'J))) [15 1] [] [] [] 0 {}]])))
+
+(deftest test-extraer-data
+  (def n0 '((())))
+  (def n1 (list '(10 (PRINT X) (REM ESTE NO) (DATA 30)) '(20 (DATA HOLA)) (list 100 (list 'DATA 'MUNDO (symbol ",") 10 (symbol ",") 20))))
+
+  (is (= (extraer-data n0) '()))
+  (is (= (extraer-data n1) '("HOLA" "MUNDO" 10 20))))
+
+(deftest test-ejecutar-asignacion
+  (is (= (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 {}])
+       '[((10 (PRINT X))) [10 1] [] [] [] 0 {X 5}]))
+  (is (= (ejecutar-asignacion '(X = 5) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+       '[((10 (PRINT X))) [10 1] [] [] [] 0 {X 5}]))
+  (is (= (ejecutar-asignacion '(X = X + 1) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 2}])
+       '[((10 (PRINT X))) [10 1] [] [] [] 0 {X 3}]))
+  (is (= (ejecutar-asignacion '(X$ = X$ + " MUNDO") ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
+         '[((10 (PRINT X))) [10 1] [] [] [] 0 {X$ "HOLA MUNDO"}])))
+
+(deftest test-preprocesar-expresion
+ (is (= (preprocesar-expresion '(X$ + " MUNDO" + Z$) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X$ "HOLA"}])
+        '("HOLA" + " MUNDO" + "")))
+
+ (is (= (preprocesar-expresion '(X + . / Y% * Z) ['((10 (PRINT X))) [10 1] [] [] [] 0 '{X 5 Y% 2}])
+        (list 5 '+ 0 '/ 2 '* 0))))
+
+(deftest test-desambiguar
+  (def n1 (list '- 2 '* (symbol "(") '- 3 '+ 5 '- (symbol "(") '+ 2 '/ 7 (symbol ")") (symbol ")")))
+  (def n2 (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ")")))
+  (def n3 (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ",") 3 (symbol ")")))
+  (def n4 (list 'MID$ (symbol "(") 1 (symbol ",") '- 2 '+ 'K (symbol ",") 3 (symbol ")")))
+
+  (def t1 (list '-u 2 '* (symbol "(") '-u 3 '+ 5 '- (symbol "(") 2 '/ 7 (symbol ")") (symbol ")")))
+  (def t2 (list 'MID$ (symbol "(") 1 (symbol ",") 2 (symbol ")")))
+  (def t3 (list 'MID3$ (symbol "(") 1 (symbol ",") 2 (symbol ",") 3 (symbol ")")))
+  (def t4 (list 'MID3$ (symbol "(") 1 (symbol ",") '-u 2 '+ 'K (symbol ",") 3 (symbol ")")))
+
+  (is (= t1 (desambiguar n1)))
+  (is (= t2 (desambiguar n2)))
+  (is (= t3 (desambiguar n3)))
+  (is (= t4 (desambiguar n4))))
+
+(deftest test-precedencia
+  (is (= (precedencia 'OR) 1))
+  (is (= (precedencia 'AND) 2))
+  (is (= (precedencia '*) 6))
+  (is (= (precedencia '-u) 7))
+  (is (= (precedencia 'MID$) 9)))
+
+(deftest test-aridad
+  (is (= (aridad 'THEN) 0))
+  (is (= (aridad 'SIN) 1))
+  (is (= (aridad '*) 2))
+  (is (= (aridad 'MID$) 2))
+  (is (= (aridad 'MID3$) 3)))
+
+(deftest test-eliminar-cero-decimal
+  (is (= 1.5 (eliminar-cero-decimal 1.5)))
+  (is (= 1.5 (eliminar-cero-decimal 1.5)))
+  (is (= 1 (eliminar-cero-decimal 1.0)))
+  (is (= 'A (eliminar-cero-decimal 'A))))
+
+(deftest test-eliminar-cero-entero
+  (is (= nil (eliminar-cero-entero nil)))
+  (is (= "A" (eliminar-cero-entero 'A)))
+  (is (= "0" (eliminar-cero-entero 0)))
+  (is (= "1.5" (eliminar-cero-entero 1.5)))
+  (is (= "1" (eliminar-cero-entero 1)))
+  (is (= "-1" (eliminar-cero-entero -1)))
+  (is (= "-1.5" (eliminar-cero-entero -1.5)))
+  (is (= ".5" (eliminar-cero-entero 0.5)))
+  (is (= "-.5" (eliminar-cero-entero -0.5))))
+
+(run-tests)

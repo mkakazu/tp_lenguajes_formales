@@ -755,8 +755,7 @@
   :else '("error")))
 
 (defn cargar-linea [linea amb]
-  (vector (insert-in-env linea (get amb 0))
-          (vec (rest amb))))
+  (vec (concat (list (insert-in-env linea (get amb 0))) (rest amb))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; expandir-nexts: recibe una lista de sentencias y la devuelve con
